@@ -15,6 +15,7 @@
       #map { 
         height: 400px;
         border-radius: 25px;
+        z-index: -1;
         
      }
     </style>
@@ -64,7 +65,7 @@
 
         window.confirmPurchase = function() {
             // Add logic for handling the purchase
-            alert('Land purchased successfully!');
+            // alert('Land purchased successfully!');
             closeModal(); // Close the modal after purchase confirmation
         }
 
@@ -106,7 +107,7 @@
 
         window.onload = async function() {
             if (!localStorage.getItem("currentPublicKey")) {
-                redirectToPage('register.html');
+                redirectToPage('login.html');
             }
             var buyerData = await getBuyerData();
             var buyerUsername = buyerData.buyerId;
@@ -143,13 +144,13 @@
                         landInfo: lands[i]
                     });
                     addMarker(lands[i].name, lands[i].state);
-                    // console.log(lands[i])
+                    // console.log(lands[i])F
                 } else if (lands[i].status == "sold") {
                     newDivContent = `
                         <article class="landCard greyed-out">
                             <div class="banner-image"> </div>
                             <h2 id="priceA">$${lands[i].price}</h2>
-                            <p id="locationA">${lands[i].name}, ${lands[i].state}</p>
+                            <p id="locationA">${lands[i].plotno} - ${lands[i].name}, ${lands[i].state}</p>
                             <p id="status"> ${lands[i].status} </p>
                             
                             <div class="button-wrapper"> 
@@ -317,8 +318,8 @@
 
 <script>
     function logout() {
-        localStorage.clear("currentPublicKey");
-        redirectToPage('register.html');
+        localStorage.clear();
+        redirectToPage('login.html');
     }
 </script>
 
@@ -326,9 +327,9 @@
 
 <script>
     const map = L.map('map', {
-  minZoom: 2 // Set your desired minimum zoom level
+//   minZoom: 2 // Set your desired minimum zoom level
 //   maxZoom:5
-}).setView([0, 0], 1); // Set an initial view and zoom level
+}).setView([0, 0], 2); // Set an initial view and zoom level
 
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

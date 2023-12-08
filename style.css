@@ -6,15 +6,27 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+
+
 body {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: #0e0635;
-  /* background-image: url(https://images.unsplash.com/photo-1607537670164-a9bfae0a8df1?q=80&w=3474&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D); */
-  background-position: center;
+  background: url(https://images.unsplash.com/photo-1591389703635-e15a07b842d7?q=80&w=3733&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) center center/cover no-repeat; /* Replace 'your-image-url.jpg' with your image URL */
+  position: relative; /* Ensure the positioning context for overlay */
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(14, 6, 53, 0.6); /* Adjust the color and opacity as necessary */
+  z-index: 1; /* Place the overlay above the background image */
 }
 .container {
   position: absolute;
@@ -24,6 +36,7 @@ body {
   padding: 25px;
   border-radius: 8px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 3;
 }
 .container header {
   font-size: 1.5rem;

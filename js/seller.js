@@ -44,8 +44,14 @@ export function getAllTransactions(key='') {
     .then(data => {
         const getTimestamp = (obj) => {
 
-            const new_obj = JSON.parse(obj.asset.replace(/'/g, '"'));
-            return new_obj.data.timestamp || undefined;
+            let new_obj;
+            try {
+                new_obj = JSON.parse(obj.asset.replace(/'/g, '"'));
+            } catch (error) {
+                console.error('Error parsing JSON:', obj);
+            }
+
+            return new_obj ? new_obj.data.timestamp : undefined;
         };
         // console.log(data);
         const sortedData = data.data.getFilteredTransactions
@@ -55,8 +61,9 @@ export function getAllTransactions(key='') {
         return sortedData;
     })
     .catch(error => {
+        console.log("error aiman")
         console.error('Error:', error);
-        setTimeout(() => longPoll(key), 15000); // Retry after 5 seconds in case of error
+        // setTimeout(() => longPoll(key), 15000); // Retry after 5 seconds in case of error
     });
 }
 
@@ -83,8 +90,11 @@ export async function getAllLands(user_public_key) {
         });
 }
 
-export async function getSellerData(user_public_key) {
-    var transactions = await getAllTransactions(user_public_key);
+export async function getSellerData(transactions, user_public_key) {
+    if (transactions==null) {
+        console.log("calling seller Data");
+        transactions = await getAllTransactions(user_public_key);
+    }
     var lands = [];
     var currentBalance;
 
@@ -142,7 +152,9 @@ export async function getSellerData(user_public_key) {
 }
   
 export async function getBuyerData() {
+    console.log("calling getBuyer Data");
     var transactions = await getAllTransactions();
+    console.log(transactions);
     var lands = [];
     var currentBalance;
     var buyerId;
@@ -156,7 +168,7 @@ export async function getBuyerData() {
         try {
             var jsonObject = JSON.parse(correctedJsonString);
             if (jsonObject.data.role == "role-seller") {
-                var sellerData = await getSellerData(transactions[i].publicKey)
+                var sellerData = await getSellerData(transactions, transactions[i].publicKey)
                 sellers[transactions[i].publicKey] = {
                     "sellerId": transactions[i].id,
                     "currentBalance": sellerData.currentBalance
@@ -209,11 +221,13 @@ export async function getBuyerData() {
         try {
             var jsonObject = JSON.parse(correctedJsonString);
             if (jsonObject.data.type == "land") {
+                console.log("buyer deatils land = ", transactions[i]);
                 sellerPublicKey = transactions[i].publicKey;
                 jsonObject.data["sellerPublicKey"] = sellerPublicKey;
                 jsonObject.data["sellerId"] = sellers[sellerPublicKey]["sellerId"];
                 jsonObject.data["sellerCurrentBalance"] = sellers[sellerPublicKey]["currentBalance"];
                 jsonObject.data["landId"] = transactions[i].id;
+                jsonObject.data["buyerPublicKey"] = jsonObject.data.buyerPublicKey;
                 if (landStatuses[jsonObject.data.id]["status"] == "sold" && jsonObject.data.status=="available") {
                     continue;
                 }
@@ -237,6 +251,8 @@ sellerCurrentBalance = parseInt(sellerCurrentBalance);
 buyerCurrentBalance = parseInt(buyerCurrentBalance)
 if (price > buyerCurrentBalance) {
     alert("insufficient Balance");
+    // redirect('/buyer-dashboard.html')
+    window.location.href = './buyer_dashboard.html'
 } else {
     console.log("Sufficient Balance");
     var buyerUpdatedBalance = -price + buyerCurrentBalance;
@@ -244,14 +260,15 @@ if (price > buyerCurrentBalance) {
     var withdraw_message = `"timestamp": ${new Date().getTime()}, "type": "balance"`;
 
     // update land to sold - payload
-    var land_details = `"id":${id}, "name": "${name}", "state": "${state}",  "price": ${price} , "type":"land",  "timestamp": ${new Date().getTime()}, "status": "sold"`
+    var buyerPublicKey = localStorage.getItem("currentPublicKey");
+    var land_details = `"id":${id}, "name": "${name}", "state": "${state}",  "price": ${price} , "type":"land",  "timestamp": ${new Date().getTime()}, "status": "sold", "buyerPublicKey":"${buyerPublicKey}" `
 
     const valuesList = [
         {
             id: buyerId,
             message: withdraw_message,
             amount: buyerUpdatedBalance,
-            address: localStorage.getItem("currentPublicKey"),
+            address: buyerPublicKey,
         },
         {
             id: sellerId,
@@ -315,6 +332,6 @@ sdk.addMessageListener((event) => {
     } else if (flag=="user-logged-in") {
     } else if (flag == "update-land-status-to-sold") {
         // commit message to update land
-        alert("Land Sold");
+        alert("Congratulations! You bought a land!");
     }
 });

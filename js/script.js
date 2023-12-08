@@ -3,6 +3,7 @@ var script = document.createElement('script');
 script.type = 'text/javascript';
 script.src = "https://code.jquery.com/jquery-2.2.1.min.js";
 import ResilientSDK from 'https://cdn.resilientdb.com/resilient-sdk.js';
+import {getAllTransactions} from "./seller.js"
 
 const sdk = new ResilientSDK();
 
@@ -99,12 +100,6 @@ sdk.addMessageListener((event) => {
     } else if (flag=="user-logged-in") {
       console.log("bugggggggggg");
       alert("bugggggggggg");
-    } else if (flag == "login-user") {
-      console.log("inside addMessageListener");
-      var user_public_key = nexres_response;
-      localStorage.setItem("currentPublicKey", user_public_key);
-      
-      flag = "show-dashboard";
     }
 
 });
@@ -161,16 +156,57 @@ function handleRegistration(event) {
   localStorage.setItem('user_name', user_name);
 }
 
-function handleLogin(event) {
+async function handleLogin(event) {
   console.log("handle login");
   event.preventDefault();
   $("#initial").fadeOut("normal", function(){
     $("#loader").fadeIn("normal");
   });
-  flag = "login-user";
-  sdk.sendMessage({
-    direction: "account-page-script",
-  });
+
+  const formData = new FormData(event.target);
+  var public_key = formData.get("publickey");
+  var user_data = await getUserData(public_key);
+  console.log("log in user_data", user_data);
+  localStorage.setItem('currentPublicKey', public_key);
+  localStorage.setItem('user_name', user_data["user_name"]);
+  localStorage.setItem('role', user_data["role"]);
+  // showLoader();
+      setTimeout(function () {
+      if (user_data["role"] == "buyer") {
+        window.location.href = './buyer_dashboard.html'
+      } else if (user_data["role"] == "seller") {
+        window.location.href = './seller_dashboard.html'
+      }
+      hideLoader();
+    }, 3000);
+}
+
+async function getUserData(public_key) {
+  var transactions = await getAllTransactions(public_key);
+  var user_data;
+  for (let i=0; i<transactions.length; i++) {
+      var str_data = transactions[i].asset;
+      var correctedJsonString = str_data.replace(/'/g, '"');
+      try {
+          var jsonObject = JSON.parse(correctedJsonString);
+          if (jsonObject.data.role == "role-seller") {
+              user_data = {
+                  "role": "seller",
+                  "user_name": jsonObject.data.name
+              }
+              return user_data;
+          } else if (jsonObject.data.role == "role-buyer") {
+            user_data = {
+              "role": "buyer",
+              "user_name": jsonObject.data.name
+          }
+          return user_data;
+          }
+      } catch (e) {
+          console.error("Error parsing JSON string:", e);
+      }
+  }
+  alert("User not found! Please register!")
 }
 
 // export async function getAllLands() {

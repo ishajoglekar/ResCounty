@@ -17,6 +17,12 @@
       
     }
   </style>
+  <script>
+    function logout() {
+        localStorage.clear();
+        redirectToPage('login.html');
+    }
+  </script>
   <script type="module">
     window.redirectToPage = function(page) {
         window.location.href = page;
@@ -61,7 +67,7 @@
 
     }
     window.onload = async function () {
-      var sellerData = await getSellerData(localStorage.getItem('currentPublicKey'));
+      var sellerData = await getSellerData(null, localStorage.getItem('currentPublicKey'));
       var lands = sellerData.lands;
       var currentBalance = sellerData.currentBalance;
       document.getElementById('balance').innerHTML = currentBalance;
@@ -130,90 +136,9 @@
       }
   }
 
-
-    // window.openDetailsModal = function(landName, landPrice, landID) {
-    //     var modal = document.getElementById('detailsModal');
-    //     var modalContent = document.querySelector('.modal-content');
-
-    //     modal.style.display = 'block';
-    //     document.getElementById('detailsModalTitle').innerHTML = landName;
-    //     document.getElementById('detailsModalPrice').innerHTML = landPrice;
-    //     document.getElementById('detailsModalID').innerHTML = Math.floor(landID / Math.pow(10, 5));
-    //     document.getElementById('detailsModalZipcode').innerHTML = landID % 100000;
-
-    //     // Use setTimeout to allow the browser to apply styles before adding 'show' class
-    //     setTimeout(function() {
-    //         modal.classList.add('show');
-    //         modalContent.classList.add('show');
-    //     }, 10);
-    // }
-
-    // // Function to close the "DETAILS" modal
-    // window.closeDetailsModal = function() {
-    //     // document.getElementById('detailsModal').style.display = 'none';
-
-
-    //     var modal = document.getElementById('detailsModal');
-    //     var modalContent = document.querySelector('.modal-content');
-
-    //     modal.classList.add('fade-out');
-    //     modalContent.classList.add('fade-out');
-
-    //     setTimeout(function() {
-    //         modal.classList.remove('show', 'fade-out');
-    //         modalContent.classList.remove('show', 'fade-out');
-    //         modal.style.display = 'none';
-    //     }, 300);
-    // }
-    
-    // window.onload = async function(){
-    //   var sellerData = await getSellerData(localStorage.getItem('currentPublicKey'));
-    //   var lands = sellerData.lands;
-    //   var currentBalance = sellerData.currentBalance;
-    //   document.getElementById('balance').innerHTML = currentBalance
-    //   console.log("Seller Data = ", sellerData);
-    //   console.log(lands)
-    //   for( let i =0;i<lands.length;i++){
-    //     var newDivContent;
-
-    //     if (lands[i].status == "available") {
-    //       newDivContent = `
-    //         <article class="landCard">
-    //           <div class="banner-image"> </div>
-    //           <h2 id="landA">${lands[i].name}</h2>
-    //           <p id="locationA">Location: ${lands[i].state} X</p>
-    //           <p id="priceA">Price: $ ${lands[i].price}</p>
-    //           <div class="button-wrapper"> 
-    //               <button class="btn outline">DETAILS</button>
-    //           </div>
-    //       </article>
-    //         `;
-    //     } else if (lands[i].status == "sold") {
-    //       newDivContent = `
-    //         <article class="landCard greyed-out">
-    //           <div class="banner-image"> </div>
-    //           <h2 id="landA">${lands[i].name}</h2>
-    //           <p id="locationA">Location: ${lands[i].state} X</p>
-    //           <p id="priceA">Price: $ ${lands[i].price}</p>
-    //           <div class="button-wrapper"> 
-    //               <button class="btn outline">SOLD</button>
-    //           </div>
-    //       </article>
-    //         `;
-    //     }
-
-    //     // Create a new div element
-    //     var newDiv = document.createElement('div');
-
-    //     // Set innerHTML using the template literal content
-    //     newDiv.innerHTML += newDivContent;
-    //     document.getElementById('landListings').appendChild(newDiv)
-    //   }
-    
-    // }
   </script>
 
-<div id="sidebar">
+<div id="sidebar" style="background: linear-gradient(#2C5D59, #BECAAE);">
   <div id="logo">
       <h1 id="userName"><i class="fa-solid fa-user" style="color: #ffffff;"></i><span id="userN"></span></h1>
       <p id="walletAmount"><i class="fa-solid fa-wallet" style="color: #ffffff;"></i>Wallet $<span id="balance"></span></p>
@@ -226,11 +151,10 @@
 </div>
 
 <div id="content">
-	  <header>
-        <h1>Land Seller Dashboard</h1>
-        <button class="logoutbtn fill_logout" onclick="redirectToPage('index.html')"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Logout</button>
-    </header>
-    
+  <header style="background-color: #2C5D59;">
+    <h1 style="text-align: center;">Land Seller Dashboard</h1>
+    <button class="logoutbtn fill_logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>Logout</button>
+  </header>
     <main>
         <section id="landrows">
             <section id="landListings">

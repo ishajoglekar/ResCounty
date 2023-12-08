@@ -17,7 +17,7 @@
             window.location.href = page;
         }
         window.onload = async function () {
-          var sellerData = await getSellerData(localStorage.getItem('currentPublicKey'));
+          var sellerData = await getSellerData(null, localStorage.getItem('currentPublicKey'));
           var lands = sellerData.lands;
           var currentBalance = sellerData.currentBalance;
           document.getElementById('balance').innerHTML = currentBalance;

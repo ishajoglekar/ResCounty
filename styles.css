@@ -14,13 +14,24 @@ body {
 }
 
 header {
-  background-color: #0e0635;
+  /* background-color: #0e0635; */
+  width: 100%;
   color: white;
   padding: 10px;
   text-align: center;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
+}
+
+
+#content header{
+  background-color: #154671;
+}
+
+#contentSeller header{
+  background-color: #2C5D59;
 }
 
 
@@ -311,7 +322,6 @@ p{
   margin: 10px;  
 }
 
-/* sidebar */
 #sidebar {
   height: 100vh; /* 100% of the viewport height */
   width: 250px;
@@ -319,7 +329,9 @@ p{
   /* top: 65px; */
   top: 0;
   left: 0;
-  background-color: #0e0635;
+  /* background-color: #0e0635; */
+  background: linear-gradient(#154671, #ABBDBC);
+  /* background: linear-gradient(#2C5D59, #BECAAE); */
   /* padding-top: 150px; */
   padding-left: 10px;
   padding-right: 10px;
