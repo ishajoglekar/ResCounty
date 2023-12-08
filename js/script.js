@@ -99,6 +99,12 @@ sdk.addMessageListener((event) => {
     } else if (flag=="user-logged-in") {
       console.log("bugggggggggg");
       alert("bugggggggggg");
+    } else if (flag == "login-user") {
+      console.log("inside addMessageListener");
+      var user_public_key = nexres_response;
+      localStorage.setItem("currentPublicKey", user_public_key);
+      
+      flag = "show-dashboard";
     }
 
 });
@@ -156,27 +162,15 @@ function handleRegistration(event) {
 }
 
 function handleLogin(event) {
+  console.log("handle login");
   event.preventDefault();
   $("#initial").fadeOut("normal", function(){
     $("#loader").fadeIn("normal");
   });
-  flag = "create-user";
+  flag = "login-user";
   sdk.sendMessage({
     direction: "account-page-script",
   });
-
-  const formData = new FormData(event.target);
-  user_name = formData.get("name");
-  ssn = formData.get("ssn");
-  role = formData.get("role");
-  
-  if(formData.get('role') == 'role-buyer'){
-    currentRole = "buyer";
-  }else if(formData.get('role') == 'role-seller'){
-    currentRole = "seller";
-  }
-  localStorage.setItem('role', currentRole);
-  localStorage.setItem('user_name', user_name);
 }
 
 // export async function getAllLands() {
